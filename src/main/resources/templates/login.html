@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <title>Login - Lab Manager</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center">Login</h1>
+                    <!-- Exibe a mensagem de erro caso o login falhe -->
+                    <div th:if="${param.error}">
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Erro de Login:</strong> As credenciais fornecidas são inválidas. Tente novamente.
+                        </div>
+                    </div>
+                    <form action="#" th:action="@{/perform_login}" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="username" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="password" name="password" required />
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                        </div>
+                    </form>
+
+                    <p class="mt-3 text-center">Não tem uma conta? <a th:href="@{/register}">Criar Conta</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <title>Lab Manager - Home</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h1 class="card-title">Página Inicial</h1>
+                    <p class="card-text">Bem-vindo de volta, <span th:text="${#authentication.name}"></span>!</p>
+                    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                        <p>Você tem acesso à área de Administração.</p>
+                    </div>
+                    <div th:if="${#authorization.expression('hasRole(''FUNCIONARIO'')')}">
+                        <p>Você tem acesso à área de Funcionário.</p>
+                    </div>
+                    <div th:if="${#authorization.expression('hasRole(''PROFESSOR'')')}">
+                        <p>Você tem acesso à área de Professor.</p>
+                    </div>
+                    <div th:if="${#authorization.expression('hasRole(''USER'')')}">
+                        <p>Você tem acesso à área de Usuário.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
