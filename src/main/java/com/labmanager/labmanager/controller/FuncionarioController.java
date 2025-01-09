@@ -70,7 +70,6 @@ public class FuncionarioController {
         return "formAgendamento";
     }
 
-
     @PostMapping("/agendamentos/editar/{id}")
     public String atualizarAgendamento(@PathVariable Long id, @ModelAttribute Agendamento agendamento, Principal principal) {
         Usuario usuarioLogado = usuarioService.buscarPorEmail(principal.getName());

@@ -9,7 +9,6 @@
 </head>
 <body>
 <div th:replace="~{navbar}"></div>
-
 <div class="container mt-5">
     <h2 class="text-center mb-4">Gerenciamento de Agendamentos</h2>
 
@@ -25,8 +24,6 @@
     <a th:if="${#authorization.expression('hasRole(''FUNCIONARIO'')')}"
        th:href="@{/funcionario/agendamentos/criar}"
        class="btn btn-primary mb-3">Novo Agendamento</a>
-
-
 
     <!-- Tabela de Agendamentos -->
     <table class="table table-striped">
@@ -79,7 +76,6 @@
                    class="btn btn-danger btn-sm"
                    onclick="return confirm('Tem certeza que deseja excluir?')">Deletar</a>
             </td>
-
         </tr>
         </tbody>
     </table>
