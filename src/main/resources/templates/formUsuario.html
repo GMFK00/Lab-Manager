@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<div th:replace="~{navbar}"></div>
+<div class="container mt-5">
+    <h2 th:text="${usuario?.id == null ? 'Criar Usuário' : 'Editar Usuário'}"></h2>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+    <form th:action="${usuario?.id == null ? '/admin/usuarios/salvar' : '/admin/usuarios/editar/' + usuario.id}"
+          th:object="${usuario}" method="post">
+        <input type="hidden" th:field="*{ativo}" value="true">
+        <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" class="form-control" th:field="*{nome}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" th:field="*{email}" required>
+        </div>
+        <div class="form-group">
+            <label for="papel">Papel</label>
+            <select id="papel" class="form-control" th:field="*{papel}">
+                <option value="ADMIN">ADMIN</option>
+                <option value="FUNCIONARIO">FUNCIONARIO</option>
+                <option value="PROFESSOR">PROFESSOR</option>
+                <option value="USER">USER</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" class="form-control" th:field="*{senha}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.navbar {
+    background-color: #007bff !important;
+    padding: 1rem;
+}
+
+.navbar-nav .nav-item {
+    margin-left: 20px;  /* Espaçamento entre as opções */
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: white !important;
+    font-size: 1.1rem;
+    padding: 12px 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s, padding-left 0.3s;  /* Efeito suave ao passar o mouse */
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: #f8f9fa !important;
+    background-color: #0056b3 !important;
+    border-radius: 5px;
+    padding-left: 20px;  /* Efeito de deslocamento ao passar o mouse */
+}
+
+.navbar-nav .nav-item.active .nav-link {
+    background-color: #004085 !important;  /* Cor mais escura para o item ativo */
+    color: #f8f9fa !important;
+    font-weight: bold;
+}
+
+.navbar-brand {
+    color: white !important;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-toggler-icon {
+    background-color: white;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.card-text {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.card-body {
+    background-color: #ffffff;
+    padding: 3rem;
+}
+
+.card-shadow-lg {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    text-align: center;
+}
+
+.table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}

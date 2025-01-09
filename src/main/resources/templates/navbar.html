@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:fragment="navbar(page)">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Lab Manager</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <!-- Início (Visível para todos os usuários) -->
+                <li class="nav-item" th:classappend="${page == 'home' ? 'active' : ''}">
+                    <a class="nav-link" href="/home">Início</a>
+                </li>
+
+                <!-- Equipamentos (Visível apenas para ADMIN e FUNCIONARIO) -->
+                <li class="nav-item" th:classappend="${page == 'equipamentos' ? 'active' : ''}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" href="/admin/equipamentos">Equipamentos</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''FUNCIONARIO'')')}">
+                    <a class="nav-link" href="/funcionario/equipamentos" th:classappend="${page == 'equipamentos' ? 'active' : ''}">Equipamentos</a>
+                </li>
+
+                <!-- Agendamentos (Visível para ADMIN, PROFESSOR e FUNCIONARIO) -->
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" href="/admin/agendamentos" th:classappend="${page == 'agendamentos' ? 'active' : ''}">Gerenciar Agendamentos</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''PROFESSOR'')')}">
+                    <a class="nav-link" href="/professor/agendamentos" th:classappend="${page == 'agendamentos' ? 'active' : ''}">Meus Agendamentos</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''FUNCIONARIO'')')}">
+                    <a class="nav-link" href="/funcionario/agendamentos" th:classappend="${page == 'agendamentos' ? 'active' : ''}">Meus Agendamentos</a>
+                </li>
+
+                <!-- Relatórios (Visível apenas para ADMIN) -->
+                <!--<li class="nav-item" th:classappend="${page == 'relatorios' ? 'active' : ''}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" href="/admin/relatorios">Relatórios</a>
+                </li>-->
+
+                <!-- Usuários (Visível apenas para ADMIN) -->
+                <li class="nav-item" th:classappend="${page == 'usuarios' ? 'active' : ''}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" href="/admin/usuarios">Usuários</a>
+                </li>
+
+                <!-- Sair (Visível para todos os usuários) -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Sair</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+</body>
+</html>

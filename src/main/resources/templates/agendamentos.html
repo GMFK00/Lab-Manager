@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <title>Agendamentos - Lab Manager</title>
+</head>
+<body>
+<div th:replace="~{navbar}"></div>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Gerenciamento de Agendamentos</h2>
+
+    <!-- Botões de criação de agendamento para Admin, Professor e Funcionário -->
+    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+       th:href="@{/admin/agendamentos/criar}"
+       class="btn btn-primary mb-3">Novo Agendamento</a>
+
+    <a th:if="${#authorization.expression('hasRole(''PROFESSOR'')')}"
+       th:href="@{/professor/agendamentos/criar}"
+       class="btn btn-primary mb-3">Novo Agendamento</a>
+
+    <a th:if="${#authorization.expression('hasRole(''FUNCIONARIO'')')}"
+       th:href="@{/funcionario/agendamentos/criar}"
+       class="btn btn-primary mb-3">Novo Agendamento</a>
+
+
+
+    <!-- Tabela de Agendamentos -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Usuário</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="agendamento : ${agendamentos}">
+            <td th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}"></td>
+            <td th:text="${agendamento.horario}"></td>
+            <td th:text="${agendamento.usuario.nome}"></td>
+            <td th:text="${agendamento.descricao}"></td>
+            <td>
+                <!-- Links de edição para Admin -->
+                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                   th:href="@{/admin/agendamentos/editar/{id}(id=${agendamento.id})}"
+                   class="btn btn-warning btn-sm">Editar</a>
+
+                <!-- Links de edição para Professor -->
+                <a th:if="${#authorization.expression('hasRole(''PROFESSOR'')')}"
+                   th:href="@{/professor/agendamentos/editar/{id}(id=${agendamento.id})}"
+                   class="btn btn-warning btn-sm">Editar</a>
+
+                <!-- Links de edição para Funcionário -->
+                <a th:if="${#authorization.expression('hasRole(''FUNCIONARIO'')')}"
+                   th:href="@{/funcionario/agendamentos/editar/{id}(id=${agendamento.id})}"
+                   class="btn btn-warning btn-sm">Editar</a>
+
+                <!-- Links de exclusão para Admin -->
+                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                   th:href="@{/admin/agendamentos/deletar/{id}(id=${agendamento.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Tem certeza que deseja excluir?')">Deletar</a>
+
+                <!-- Links de exclusão para Professor -->
+                <a th:if="${#authorization.expression('hasRole(''PROFESSOR'')')}"
+                   th:href="@{/professor/agendamentos/deletar/{id}(id=${agendamento.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Tem certeza que deseja excluir?')">Deletar</a>
+
+                <!-- Links de exclusão para Funcionário -->
+                <a th:if="${#authorization.expression('hasRole(''FUNCIONARIO'')')}"
+                   th:href="@{/funcionario/agendamentos/deletar/{id}(id=${agendamento.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Tem certeza que deseja excluir?')">Deletar</a>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

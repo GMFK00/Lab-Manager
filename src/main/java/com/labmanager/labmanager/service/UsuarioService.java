@@ -11,14 +11,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Data
 @Service
 public class UsuarioService implements UserDetailsService {
 
-    private final UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Injetando o PasswordEncoder no construtor
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
@@ -26,34 +27,70 @@ public class UsuarioService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Buscar o usuário no banco de dados com base no email
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
         return User.builder()
-                .username(usuario.getEmail())  // Definindo o nome de usuário como o email
-                .password(usuario.getSenha())  // A senha criptografada
-                .roles(usuario.getPapel().name())  // Definindo os papéis do usuário (como "ROLE_ADMIN")
+                .username(usuario.getEmail())
+                .password(usuario.getSenha())
+                .roles(usuario.getPapel().name())
                 .build();
     }
 
-    // Função para criar um novo usuário com a senha criptografada
     public Usuario criarUsuario(Usuario usuario) {
-        // Verifica se o email é válido e define o papel do usuário
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new IllegalArgumentException("Já existe um usuário com este email.");
+        }
         String email = usuario.getEmail();
         if (email.endsWith("@professor.uema.br")) {
             usuario.setPapel(Papel.PROFESSOR);
         } else if (usuario.getPapel() == null) {
-            usuario.setPapel(Papel.USER); // Papel USER como padrão para email genérico
+            usuario.setPapel(Papel.USER);
+        }
+        usuario.setAtivo(true);
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        return usuarioRepository.save(usuario);
+    }
+
+
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    public Usuario buscarUsuarioPorId(Long id) {
+        return usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+    }
+
+    public void excluirUsuario(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    public void editarUsuario(Usuario usuario) {
+        Usuario existingUsuario = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        if (!existingUsuario.getEmail().equals(usuario.getEmail()) && usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new IllegalArgumentException("Já existe outro usuário com este email.");
         }
 
-        // Define o usuário como ativo por padrão
-        usuario.setAtivo(true);
+        // Preserva o status ativo do usuário existente
+        usuario.setAtivo(existingUsuario.getAtivo());
 
-        // Criptografa a senha antes de salvar
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        // Reencode a senha, se necessário
+        if (!usuario.getSenha().equals(existingUsuario.getSenha())) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        }
 
-        // Salva o usuário no banco de dados
-        return usuarioRepository.save(usuario);
+        usuarioRepository.save(usuario);
+    }
+
+    public List<Usuario> buscarPorNomeParcial(String nome) {
+        return usuarioRepository.findByNomeContainingIgnoreCase(nome);
+    }
+
+
+    public Usuario buscarPorEmail(String name) {
+        return usuarioRepository.findByEmail(name)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 }

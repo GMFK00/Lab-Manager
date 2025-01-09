@@ -22,4 +22,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     // Opcional: Buscar usuário pelo email e status ativo
     Optional<Usuario> findByEmailAndAtivoTrue(String email);
+
+    // Listar todos os usuários
+    List<Usuario> findAll();
+
+    List<Usuario> findByNomeContainingIgnoreCase(String nome);
+
+    Optional<Usuario> findById(Long id);
+
 }

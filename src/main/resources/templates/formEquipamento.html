@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${equipamento.id == null ? 'Adicionar Equipamento' : 'Editar Equipamento'}"></title>
+</head>
+<body>
+<div th:replace="~{navbar}"></div>
+
+<div class="container mt-5">
+    <h1 class="text-center" th:text="${equipamento.id == null ? 'Adicionar Equipamento' : 'Editar Equipamento'}"></h1>
+
+    <!-- Detecta se é ADMIN ou FUNCIONÁRIO e ajusta a URL -->
+    <form th:action="${equipamento?.id == null
+                  ? (#authorization.expression('hasRole(''ADMIN'')') ? '/admin/equipamentos/registrar'
+                    : '/funcionario/equipamentos/registrar')
+                  : (#authorization.expression('hasRole(''ADMIN'')') ? '/admin/equipamentos/editar/' + equipamento.id
+                    : '/funcionario/equipamentos/editar/' + equipamento.id)}"
+          method="post"
+          th:object="${equipamento}">
+
+
+    <!-- Nome e Número de Série apenas visíveis para ADMIN -->
+        <div class="form-group" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" th:field="*{nome}" class="form-control" required>
+        </div>
+        <div class="form-group" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <label for="numeroSerie">Número de Série</label>
+            <input type="text" id="numeroSerie" th:field="*{numeroSerie}" class="form-control" required>
+        </div>
+
+        <!-- Descrição (visível para ADMIN e FUNCIONÁRIO) -->
+        <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" th:field="*{descricao}" class="form-control">
+        </div>
+
+        <!-- Status (visível para ADMIN e FUNCIONÁRIO) -->
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" th:field="*{status}" class="form-control" required>
+                <option value="Disponível">Disponível</option>
+                <option value="Em manutenção">Em manutenção</option>
+                <option value="Inoperante">Inoperante</option>
+            </select>
+        </div>
+
+        <!-- Observações (visível para ADMIN e FUNCIONÁRIO) -->
+        <div class="form-group">
+            <label for="observacoes">Observações</label>
+            <textarea id="observacoes" th:field="*{observacoes}" class="form-control"></textarea>
+        </div>
+
+        <!-- Botão de Envio -->
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <!-- Cancelar retorna para a página de listagem -->
+        <a th:href="${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/equipamentos' : '/funcionario/equipamentos'}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+</body>
+</html>

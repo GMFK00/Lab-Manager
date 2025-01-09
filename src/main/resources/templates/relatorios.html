@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center">Gerenciar Relatórios</h1>
+    <div class="text-center">
+        <a href="#" class="btn btn-success">Novo Relatório</a>
+    </div>
+    <div class="mt-4">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Data de Geração</th>
+                <th>Tipo</th>
+                <th>Conteúdo</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>2025-01-10</td>
+                <td>Uso de Equipamentos</td>
+                <td>Relatório de uso de equipamentos no laboratório 01</td>
+                <td>
+                    <a href="/admin/relatorios/editar/1" class="btn btn-primary">Editar</a>
+                    <a href="/admin/relatorios/excluir/1" class="btn btn-danger">Excluir</a>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>2025-01-11</td>
+                <td>Agendamentos</td>
+                <td>Relatório de agendamentos para janeiro</td>
+                <td>
+                    <a href="/admin/relatorios/editar/2" class="btn btn-primary">Editar</a>
+                    <a href="/admin/relatorios/excluir/2" class="btn btn-danger">Excluir</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data // Lombok gera automaticamente getters, setters, toString, equals e hashCode
 @NoArgsConstructor // Lombok gera o construtor sem argumentos
@@ -13,7 +14,6 @@ import java.sql.Date;
 @Table(name = "equipamentos")
 public class Equipamento {
 
-    // FAZER VALIDAÇÕES
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,4 +35,30 @@ public class Equipamento {
 
     @Column(nullable = true)
     private String observacoes;
+
+    // Construtor para garantir que a data de cadastro seja preenchida ao criar um novo Equipamento
+    public Equipamento(String nome, String descricao, String numeroSerie, String status, String observacoes) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.numeroSerie = numeroSerie;
+        this.status = status;
+        this.dataCadastro = Date.valueOf(LocalDate.now()); // Preenche a data de cadastro automaticamente
+        this.observacoes = observacoes;
+    }
+
+    // Adicionar na classe Equipamento:
+    @PrePersist
+    protected void onCreate() {
+        if (dataCadastro == null) {
+            dataCadastro = Date.valueOf(LocalDate.now());
+        }
+    }
+
+    // Adicionar na classe Equipamento para garantir a data ao editar:
+    @PreUpdate
+    protected void onUpdate() {
+        if (dataCadastro == null) {
+            dataCadastro = Date.valueOf(LocalDate.now());
+        }
+    }
 }

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<div th:replace="~{navbar}"></div>
+<div class="container mt-5">
+    <h2 th:text="${agendamento?.id == null ? 'Criar Agendamento' : 'Editar Agendamento'}"></h2>
+
+    <form th:action="${agendamento?.id == null
+                  ? (#authorization.expression('hasRole(''ADMIN'')') ? '/admin/agendamentos/salvar'
+                    : (#authorization.expression('hasRole(''PROFESSOR'')') ? '/professor/agendamentos/salvar'
+                    : '/funcionario/agendamentos/salvar'))
+                  : (#authorization.expression('hasRole(''ADMIN'')') ? '/admin/agendamentos/editar/' + agendamento.id
+                    : (#authorization.expression('hasRole(''PROFESSOR'')') ? '/professor/agendamentos/editar/' + agendamento.id
+                    : '/funcionario/agendamentos/editar/' + agendamento.id))}"
+          th:object="${agendamento}" method="post">
+
+
+
+    <!-- Campo de Data -->
+        <div class="form-group">
+            <label for="data">Data</label>
+            <input type="date" id="data" class="form-control" th:field="*{data}" required>
+        </div>
+
+        <!-- Campo de Horário -->
+        <div class="form-group">
+            <label for="horario">Horário</label>
+            <select id="horario" class="form-control" th:field="*{horario}" required>
+                <option th:each="horario : ${horariosDisponiveis}" th:value="${horario}" th:text="${horario}" th:selected="${agendamento.horario == horario}"></option>
+            </select>
+        </div>
+
+        <!-- Campo de Usuário (somente para ADMIN) -->
+        <div class="form-group" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <label for="usuarioBusca">Usuário</label>
+            <input type="text" id="usuarioBusca" class="form-control" placeholder="Digite o nome do usuário...">
+            <ul id="sugestoes" class="list-group" style="position: absolute; z-index: 1000; width: 100%; display: none;"></ul>
+            <!-- Campo Oculto para Enviar o ID do Usuário -->
+            <input type="hidden" id="usuarioId" name="usuarioId" th:value="*{usuario?.id}">
+        </div>
+
+        <!-- Campo de Descrição -->
+        <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" class="form-control" th:field="*{descricao}" required></textarea>
+        </div>
+
+        <!-- Botão de Envio -->
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a th:href="${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/agendamentos'
+            : (#authorization.expression('hasRole(''PROFESSOR'')') ? '/professor/agendamentos'
+            : '/funcionario/agendamentos')}"
+           class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <!-- Script para buscar usuários (somente para ADMIN) -->
+    <script th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+        const usuarioBusca = document.getElementById('usuarioBusca');
+        const sugestoes = document.getElementById('sugestoes');
+        const usuarioId = document.getElementById('usuarioId');
+
+        usuarioBusca.addEventListener('input', function () {
+            const query = usuarioBusca.value;
+            if (query.length > 2) {
+                const baseUrl = window.location.href.includes('/admin/') ? '/admin'
+                    : window.location.href.includes('/professor/') ? '/professor'
+                        : '/funcionario';
+
+                fetch(`${baseUrl}/usuarios/busca?nome=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        sugestoes.innerHTML = '';
+                        if (data.length > 0) {
+                            sugestoes.style.display = 'block';
+                            data.forEach(usuario => {
+                                const li = document.createElement('li');
+                                li.className = 'list-group-item list-group-item-action';
+                                li.textContent = usuario.nome;
+                                li.addEventListener('click', () => {
+                                    usuarioBusca.value = usuario.nome;
+                                    usuarioId.value = usuario.id;
+                                    sugestoes.style.display = 'none';
+                                });
+                                sugestoes.appendChild(li);
+                            });
+                        } else {
+                            sugestoes.style.display = 'none';
+                        }
+                    });
+            } else {
+                sugestoes.style.display = 'none';
+            }
+        });
+    </script>
+
+    <!-- Script para carregar horários disponíveis -->
+    <script>
+        document.getElementById('data').addEventListener('change', function () {
+            const dataSelecionada = this.value;
+            carregarHorariosDisponiveis(dataSelecionada);
+        });
+
+        window.addEventListener('load', function () {
+            const dataField = document.getElementById('data');
+            if (dataField.value) {
+                carregarHorariosDisponiveis(dataField.value, document.getElementById('horario').getAttribute('data-selecionado'));
+            }
+        });
+
+        function carregarHorariosDisponiveis(data, horarioSelecionado = null) {
+            let agendamentoId = document.querySelector('form').getAttribute('action').split('/').pop();
+            if (isNaN(agendamentoId)) {
+                agendamentoId = ''; // Se não houver ID, defina como vazio
+            }
+
+            const baseUrl = window.location.href.includes('/admin/') ? '/admin'
+                : window.location.href.includes('/professor/') ? '/professor'
+                    : '/funcionario';
+
+            fetch(`${baseUrl}/agendamentos/horarios-disponiveis?data=${data}&agendamentoId=${agendamentoId}`)
+                .then(response => response.json())
+                .then(horarios => {
+                    const selectHorario = document.getElementById('horario');
+                    selectHorario.innerHTML = '';
+                    if (horarios.length === 0) {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'Nenhum horário disponível';
+                        selectHorario.appendChild(option);
+                    } else {
+                        horarios.forEach(horario => {
+                            const option = document.createElement('option');
+                            option.value = horario;
+                            option.textContent = horario;
+
+                            if (horario === horarioSelecionado) {
+                                option.selected = true;
+                            }
+
+                            selectHorario.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    const selectHorario = document.getElementById('horario');
+                    selectHorario.innerHTML = '<option value="" disabled>Erro ao carregar horários</option>';
+                    console.error('Erro ao buscar horários disponíveis:', error);
+                });
+        }
+
+
+    </script>
+</div>
+</body>
+</html>
